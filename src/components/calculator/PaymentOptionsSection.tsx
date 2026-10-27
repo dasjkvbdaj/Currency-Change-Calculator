@@ -74,7 +74,7 @@ export const PaymentOptionsSection = ({
           label="Amount Paid (Lebanese Pounds)"
           value={paidLbpRaw}
           onChange={onChangePaidLbp}
-          placeholder="e.g. 1500000"
+          placeholder="e.g. 1,500"
           unit="LBP"
           decimal={false}
           error={paidLbp.kind === "error" ? paidLbp.message : undefined}
@@ -118,7 +118,7 @@ export const PaymentOptionsSection = ({
               label="2. Paid in LBP"
               value={paidLbpRaw}
               onChange={onChangePaidLbp}
-              placeholder="e.g. 250000"
+              placeholder="e.g. 250"
               unit="LBP"
               decimal={false}
               error={paidLbp.kind === "error" ? paidLbp.message : undefined}

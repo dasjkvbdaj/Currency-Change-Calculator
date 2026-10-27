@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import {
   calculate,
   distribute,
-  parseLbp,
+  parseLbpScaled,
   parseRate,
   parseUsd,
   type Currency,
@@ -24,9 +24,9 @@ export const useCurrencyCalculator = () => {
   const invoice =
     invoiceCurrency === "USD"
       ? parseUsd(invoiceRaw, "Invoice amount cannot be negative.")
-      : parseLbp(invoiceRaw, "Invoice amount cannot be negative.");
+      : parseLbpScaled(invoiceRaw, "Invoice amount cannot be negative.");
 
-  const paidLbp = parseLbp(paidLbpRaw, "Payment amount cannot be negative.");
+  const paidLbp = parseLbpScaled(paidLbpRaw, "Payment amount cannot be negative.");
   const paidUsd = parseUsd(paidUsdRaw, "Payment amount cannot be negative.");
 
   const outcome = calculate({

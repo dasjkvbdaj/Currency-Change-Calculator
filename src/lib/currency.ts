@@ -57,6 +57,19 @@ export function parseLbp(raw: string, negMsg: string): Parsed<bigint> {
   return { kind: "ok", value: int / div };
 }
 
+/**
+ * Multiply a raw LBP string by 1000 before parsing.
+ * Typing "100" → parses as 100,000 LBP.
+ */
+export function parseLbpScaled(raw: string, negMsg: string): Parsed<bigint> {
+  const r = check(raw, negMsg);
+  if (r.kind !== "ok") return r;
+  const { int, scale } = r.value;
+  const div = 10n ** BigInt(scale);
+  if (int % div !== 0n) return { kind: "error", message: "LBP amounts must be whole pounds." };
+  return { kind: "ok", value: (int / div) * 1000n };
+}
+
 /** Returns USD as integer cents. */
 export function parseUsd(raw: string, negMsg: string): Parsed<bigint> {
   const r = check(raw, negMsg);
