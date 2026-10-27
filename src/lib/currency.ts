@@ -44,6 +44,7 @@ export function parseRate(raw: string): Parsed<Rate> {
   if (raw.trim() === "") return { kind: "error", message: "Enter the current exchange rate." };
   const r = check(raw, "The exchange rate must be greater than zero.");
   if (r.kind !== "ok") return r;
+  
   if (r.value.int <= 0n) return { kind: "error", message: "The exchange rate must be greater than zero." };
   return { kind: "ok", value: { num: r.value.int, scale: r.value.scale } };
 }
