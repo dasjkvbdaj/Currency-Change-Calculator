@@ -39,28 +39,16 @@ export const CurrencyChangeCalculator = () => {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-6 sm:py-8">
-      {/* Header with sticky/fixed clear button at top right */}
-      <header className="sticky top-4 z-20 mb-6 flex flex-wrap items-center justify-between gap-3 border-b bg-background/95 pb-4 backdrop-blur-sm">
+      <header className="mb-6 flex flex-wrap items-end justify-between gap-3 border-b pb-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight sm:text-3xl text-foreground">
             Currency Change Calculator
           </h1>
           <p className="text-sm text-muted-foreground">Dual-Currency Cashier System · USD &amp; LBP</p>
         </div>
-
-        <div className="flex items-center gap-3">
-          <span className="tabular rounded-md border bg-card px-3 py-1.5 text-sm font-semibold text-foreground shadow-xs">
-            {rateLabel}
-          </span>
-          <button
-            type="button"
-            onClick={clear}
-            className="calc-btn-base h-9 rounded-md bg-destructive px-3.5 text-xs font-semibold text-destructive-foreground shadow-xs hover:bg-destructive/90 cursor-pointer"
-            title="Clear Calculator"
-          >
-            Clear Calculator
-          </button>
-        </div>
+        <span className="tabular rounded-md border bg-card px-3 py-1.5 text-sm font-semibold text-foreground shadow-xs">
+          {rateLabel}
+        </span>
       </header>
 
       <div className="grid gap-5 lg:grid-cols-2">
@@ -94,6 +82,14 @@ export const CurrencyChangeCalculator = () => {
               rate={rate}
             />
           </SectionCard>
+
+          <button
+            type="button"
+            onClick={clear}
+            className="calc-btn-base hidden h-11 w-full rounded-md border bg-card font-medium hover:bg-muted lg:block"
+          >
+            Clear Calculator
+          </button>
         </div>
 
         <div className="space-y-5">
@@ -112,8 +108,17 @@ export const CurrencyChangeCalculator = () => {
             usdReturnError={usdReturnError}
             dist={dist}
           />
+
+          <button
+            type="button"
+            onClick={clear}
+            className="calc-btn-base h-11 w-full rounded-md border bg-card font-medium hover:bg-muted lg:hidden"
+          >
+            Clear Calculator
+          </button>
         </div>
       </div>
     </div>
   );
 };
+
