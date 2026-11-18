@@ -38,8 +38,20 @@ export const CurrencyChangeCalculator = () => {
   const rateLabel = rate.kind === "ok" ? `1 USD = ${fmtRate(rate.value)} LBP` : "Rate not set";
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-6 sm:py-8">
-      <header className="mb-6 flex flex-wrap items-end justify-between gap-3 border-b pb-4">
+    <div className="mx-auto max-w-6xl px-4 py-6 sm:py-8 relative">
+      {/* زر الـ Clear الثابت في الأعلى على اليمين مع خاصية Fixed */}
+      <div className="fixed top-4 right-4 z-50 sm:top-6 sm:right-6">
+        <button
+          type="button"
+          onClick={clear}
+          className="calc-btn-base flex items-center gap-1.5 h-10 px-4 rounded-lg border bg-card/90 backdrop-blur-md font-medium shadow-md hover:bg-muted text-sm text-foreground border-border transition-all"
+          title="Clear Calculator"
+        >
+          <span>Clear Calculator</span>
+        </button>
+      </div>
+
+      <header className="mb-6 flex flex-wrap items-end justify-between gap-3 border-b pb-4 pr-32 sm:pr-40">
         <div>
           <h1 className="text-2xl font-bold tracking-tight sm:text-3xl text-foreground">
             Currency Change Calculator
@@ -82,14 +94,6 @@ export const CurrencyChangeCalculator = () => {
               rate={rate}
             />
           </SectionCard>
-
-          <button
-            type="button"
-            onClick={clear}
-            className="calc-btn-base hidden h-11 w-full rounded-md border bg-card font-medium hover:bg-muted lg:block"
-          >
-            Clear Calculator
-          </button>
         </div>
 
         <div className="space-y-5">
@@ -108,17 +112,8 @@ export const CurrencyChangeCalculator = () => {
             usdReturnError={usdReturnError}
             dist={dist}
           />
-
-          <button
-            type="button"
-            onClick={clear}
-            className="calc-btn-base h-11 w-full rounded-md border bg-card font-medium hover:bg-muted lg:hidden"
-          >
-            Clear Calculator
-          </button>
         </div>
       </div>
     </div>
   );
 };
-
