@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import {
   fmtLbp,
   fmtLbpFrac,
@@ -18,6 +19,8 @@ interface ChangeReturnSectionProps {
   dist: Distribution | null;
 }
 
+const STEP_CENTS = 500n; // 5 USD in cents
+
 export const ChangeReturnSection = ({
   outcome,
   usdReturnRaw,
@@ -26,9 +29,21 @@ export const ChangeReturnSection = ({
   usdReturnError,
   dist,
 }: ChangeReturnSectionProps) => {
-  if (outcome.status !== "over") return null;
+  const quickButtons = useMemo(() => {
+    if (outcome.status !== "over") return [0n];
 
-  const quickButtons = [0n, 500n, 1000n, 2000n, 3000n];
+    const buttons: bigint[] = [0n];
+    // Generate 5 USD increments up to maxUsdCents (with a safety cap to avoid huge lists)
+    const maxSteps = 200n;
+    for (let step = 1n; step <= maxSteps; step++) {
+      const candidate = step * STEP_CENTS;
+      if (candidate > outcome.maxUsdCents) break;
+      buttons.push(candidate);
+    }
+    return buttons;
+  }, [outcome]);
+
+  if (outcome.status !== "over") return null;
 
   return (
     <>
@@ -43,18 +58,21 @@ export const ChangeReturnSection = ({
           helper={`Maximum: ${fmtUsdCents(outcome.maxUsdCents)}`}
         />
         <div className="mb-4 flex flex-wrap gap-2">
-          {quickButtons.map((cents) => (
-            <button
-              key={cents.toString()}
-              type="button"
-              disabled={cents > outcome.maxUsdCents}
-              title={cents > outcome.maxUsdCents ? "More than the change owed" : undefined}
-              onClick={() => onChangeUsdReturn((Number(cents) / 100).toString())}
-              className="calc-btn-base tabular h-9 rounded-md border px-3 text-xs font-semibold hover:bg-muted disabled:cursor-not-allowed disabled:opacity-30"
-            >
-              {Number(cents) / 100} USD
-            </button>
-          ))}
+          {quickButtons.map((cents) => {
+            const disabled = cents > outcome.maxUsdCents;
+            return (
+              <button
+                key={cents.toString()}
+                type="button"
+                disabled={disabled}
+                title={disabled ? "More than the change owed" : undefined}
+                onClick={() => onChangeUsdReturn((Number(cents) / 100).toString())}
+                className="calc-btn-base tabular h-9 rounded-md border px-3 text-xs font-semibold hover:bg-muted disabled:cursor-not-allowed disabled:opacity-30"
+              >
+                {Number(cents) / 100} USD
+              </button>
+            );
+          })}
           <button
             type="button"
             onClick={() => onChangeUsdReturn((Number(outcome.maxUsdCents) / 100).toFixed(2))}
