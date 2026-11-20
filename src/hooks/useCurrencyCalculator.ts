@@ -10,9 +10,30 @@ import {
 } from "@/lib/currency";
 
 const SAMPLE_RATE = "89000";
+const RATE_STORAGE_KEY = "currency_calc_rate_v1";
+
+function readStoredRate(): string {
+  if (typeof window === "undefined") return SAMPLE_RATE;
+  try {
+    const saved = window.localStorage.getItem(RATE_STORAGE_KEY);
+    return saved && saved.trim() !== "" ? saved : SAMPLE_RATE;
+  } catch {
+    return SAMPLE_RATE;
+  }
+}
+
+function writeStoredRate(value: string): void {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(RATE_STORAGE_KEY, value);
+  } catch {
+    // Ignore storage quota or private browsing errors
+  }
+}
 
 export const useCurrencyCalculator = () => {
-  const [rateRaw, setRateRaw] = useState(SAMPLE_RATE);
+  const [rateRaw, setRateRaw] = useState<string>(SAMPLE_RATE);
+  const [savedRateRaw, setSavedRateRaw] = useState<string>(SAMPLE_RATE);
   const [invoiceRaw, setInvoiceRaw] = useState("");
   const [invoiceCurrency, setInvoiceCurrency] = useState<Currency>("LBP");
   const [paymentMode, setPaymentMode] = useState<PaymentMode>("USD");
@@ -20,7 +41,26 @@ export const useCurrencyCalculator = () => {
   const [paidUsdRaw, setPaidUsdRaw] = useState("");
   const [usdReturnRaw, setUsdReturnRaw] = useState("0");
 
+  // Load persisted exchange rate after mount to prevent SSR hydration mismatch
+  useEffect(() => {
+    const stored = readStoredRate();
+    setRateRaw(stored);
+    setSavedRateRaw(stored);
+  }, []);
+
   const rate = parseRate(rateRaw);
+
+  const saveRate = () => {
+    if (rate.kind !== "ok") return;
+    const normalized = rateRaw.trim();
+    writeStoredRate(normalized);
+    setRateRaw(normalized);
+    setSavedRateRaw(normalized);
+  };
+
+  const isRateDirty = rateRaw.trim() !== savedRateRaw.trim();
+  const isRateSaved = !isRateDirty && rate.kind === "ok";
+
   const invoice =
     invoiceCurrency === "USD"
       ? parseUsd(invoiceRaw, "Invoice amount cannot be negative.")
@@ -67,6 +107,9 @@ export const useCurrencyCalculator = () => {
   return {
     rateRaw,
     setRateRaw,
+    saveRate,
+    isRateDirty,
+    isRateSaved,
     rate,
     invoiceRaw,
     setInvoiceRaw,
