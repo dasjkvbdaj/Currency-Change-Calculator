@@ -11,6 +11,9 @@ export const CurrencyChangeCalculator = () => {
   const {
     rateRaw,
     setRateRaw,
+    saveRate,
+    isRateDirty,
+    isRateSaved,
     rate,
     invoiceRaw,
     setInvoiceRaw,
@@ -56,6 +59,9 @@ export const CurrencyChangeCalculator = () => {
           <ExchangeRateSection
             rateRaw={rateRaw}
             onChangeRate={setRateRaw}
+            onSaveRate={saveRate}
+            isRateDirty={isRateDirty}
+            isRateSaved={isRateSaved}
             rate={rate}
             sampleRate={sampleRate}
           />
@@ -121,4 +127,3 @@ export const CurrencyChangeCalculator = () => {
     </div>
   );
 };
-
